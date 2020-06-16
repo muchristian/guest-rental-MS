@@ -10,11 +10,12 @@
 | contains the "web" middleware group. Now create something great!
 |
 
+*/
+
+date_default_timezone_set("africa/Kigali");
 
 Route::get('/', function () {
     return view('welcome');
-});*/
-date_default_timezone_set("africa/Kigali");
-
+});
 Route::get('user/verify/{verification_code}', 'AuthController@verifyUser');
 Route::get('user/reset_password/{reset_code}', 'AuthController@resetPassword');
