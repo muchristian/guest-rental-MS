@@ -2,6 +2,22 @@
 
 use Illuminate\Support\Str;
 
+$Database_url = env('DATABASE_URL');
+$db_data = parse_url($Database_url);
+$url_data = array(
+    "host"=>env('DB_HOST', '127.0.0.1'), 
+    "port"=>env('DB_PORT', '5432'), 
+    "db"=>env('DB_DATABASE', 'forge'), 
+    "user"=>env('DB_USERNAME', 'forge'), 
+    "pass"=>env('DB_PASSWORD', ''));
+if (App::environment('Production')) {
+$url_data = array(
+    "host"=>$db_data["host"], 
+    "port"=>$db_data["port"], 
+    "db"=>ltrim($db_data["path"], "/"), 
+    "user"=>$db_data["user"], 
+    "pass"=>$db_data["pass"]);
+}
 return [
 
     /*
@@ -15,7 +31,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -66,11 +82,11 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'host' => $url_data['host'],
+            'port' => $url_data['port'],
+            'database' => $url_data['db'],
+            'username' => $url_data['user'],
+            'password' => $url_data['pass'],
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
