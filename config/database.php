@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Str;
-/*use Illuminate\Support\Facades\App;
 
 $Database_url = env('DATABASE_URL');
 $db_data = parse_url($Database_url);
@@ -11,7 +10,7 @@ $url_data = array(
     "db"=>env('DB_DATABASE', 'forge'), 
     "user"=>env('DB_USERNAME', 'forge'), 
     "pass"=>env('DB_PASSWORD', ''));
-if (App::environment('Production')) {
+if (env('APP_ENV') === 'Production') {
 $url_data = array(
     "host"=>$db_data["host"], 
     "port"=>$db_data["port"], 
@@ -19,7 +18,6 @@ $url_data = array(
     "user"=>$db_data["user"], 
     "pass"=>$db_data["pass"]);
 }
-*/
 return [
 
     /*
@@ -84,18 +82,18 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'), 
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'host' => $url_data['host'],
+            'port' => $url_data['port'],
+            'database' => $url_data['db'],
+            'username' => $url_data['user'],
+            'password' => $url_data['pass'],
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
             'schema' => 'public',
             'sslmode' => 'prefer',
         ],
-        
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
