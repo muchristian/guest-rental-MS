@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\App;
 
 $Database_url = env('DATABASE_URL');
 $db_data = parse_url($Database_url);
