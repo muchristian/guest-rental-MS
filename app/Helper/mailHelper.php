@@ -7,9 +7,9 @@ use Mail;
 trait mailHelper {
     public function sendMail($view, $attr, $email, $code, $url) {
         return Mail::send($view, ['firstName'=> $attr, "{$code}"=>$url], function($mail) use ($email) {
-            $mail->from('markjoker73@gmail.com', $this->codeVal($code)->title);
+            $mail->from('markjoker73@gmail.com', 'verify email');
             $mail->to($email);
-            $mail->subject($this->codeVal($code)->subject);
+            $mail->subject('please verify your email account');
           });
     }
 
