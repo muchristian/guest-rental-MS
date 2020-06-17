@@ -56,8 +56,6 @@ class AuthController extends Controller
       $lastname = $request->lastname;
       $email = $request->email;
       $this->sendMail('email.verify',
-      'Verify email',
-      'please verify your email account', 
       $firstname, 
       $email, 
       'verification_code', 
@@ -157,8 +155,6 @@ class AuthController extends Controller
         'token' => $reset_code
       ]);
       $this->sendMail('password.forgot_password',
-      'Reset Password',
-      'You can reset your password', 
       $user->firstName, 
       $input['email'], 
       'reset_code', 
