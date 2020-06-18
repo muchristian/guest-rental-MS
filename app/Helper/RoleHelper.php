@@ -4,6 +4,6 @@ namespace App\Helper;
 
 class RoleHelper {
     public static function Roles() {
-        return array('MANAGER', 'ADMIN/OWNER', 'SUPER_ADMIN');
+        return array('MANAGER', 'ADMIN', 'SUPER_ADMIN');
     }
 }
