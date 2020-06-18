@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder
             'phoneNumber' => '07823728610',
             'gender' => 'male',
             'password' => Hash::make('markchris32'),
-            'role' => 'ADMIN',
+            'role' => 'SUPER_ADMIN',
             'email_verified_at' => $dt->format('Y-m-d H:i:s'),
             'is_verified' => 1
         ]);

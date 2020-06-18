@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Str;
 
-$Database_url = env('DATABASE_URL');
+$Database_url = 'postgres://imravosgkcywmn:96db88c4ec8bcc06e2ff6a9e8c35cd1c9aedba43b41878f3c46ce8c3783663b2@ec2-52-70-15-120.compute-1.amazonaws.com:5432/d9bje931he8opf';
 $db_data = parse_url($Database_url);
 $url_data = array(
     "host"=>env('DB_HOST', '127.0.0.1'), 

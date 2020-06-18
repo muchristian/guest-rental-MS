@@ -36,40 +36,49 @@ class AuthController extends Controller
 
     public function signup(RegistrationFormRequest $request)
     {
-      $user = User::create([
-        'firstName' => $request->firstName,
-        'lastName' => $request->lastName,
-        'username' => $request->username,
-        'email' => $request->email,
-        'phoneNumber' => $request->phoneNumber,
-        'gender' => $request->gender,
-        'password' => bcrypt($request->password),
-        'role' => $request->role,
-      ]);
-
-      $verification_code = auth()->login($user);
-      DB::table('user_verifications')->insert([
-        'user_id' => $user->id,
-        'token' => $verification_code
-      ]);
-      $firstname = $request->firstName;
-      $lastname = $request->lastname;
-      $email = $request->email;
-      $this->sendMail('email.verify',
-      $firstname, 
-      $email, 
-      'verification_code', 
-      $verification_code);
-      return ResponseHandler::successResponse(
-          'user successfully registed', 
-          Response::HTTP_CREATED, 
-          $user, 
-          $this->respondWithToken($verification_code)
-      );
+      
+      try{
+        $user = User::create([
+          'firstName' => $request->firstName,
+          'lastName' => $request->lastName,
+          'username' => $request->username,
+          'email' => $request->email,
+          'phoneNumber' => $request->phoneNumber,
+          'gender' => $request->gender,
+          'password' => bcrypt($request->password),
+          'role' => $request->role,
+        ]);
+  
+        $verification_code = auth()->login($user);
+        DB::table('user_verifications')->insert([
+          'user_id' => $user->id,
+          'token' => $verification_code
+        ]);
+        $firstname = $request->firstName;
+        $lastname = $request->lastname;
+        $email = $request->email;
+        $this->sendMail('email.verify',
+        $firstname, 
+        $email, 
+        'verification_code', 
+        $verification_code);
+        return ResponseHandler::successResponse(
+            'user successfully registed', 
+            Response::HTTP_CREATED, 
+            $user, 
+            $this->respondWithToken($verification_code)
+        );
+     } catch(\Swift_TransportException $transportExp) {
+      User::where('email', $email)->delete();
+      return ResponseHandler::errorResponse(
+        $transportExp->getMessage(),
+         Response::HTTP_BAD_REQUEST
+        );
+     }
     }
 
     public function verifyUser($verification_code){
-      if ($this->expDate($reset_code) > $this->expDate($reset_code)) {
+      if ($this->expDate($verification_code) > $this->expDate($verification_code)) {
         return ResponseHandler::errorResponse(
           'verification code has expired',
            Response::HTTP_BAD_REQUEST
@@ -141,11 +150,22 @@ class AuthController extends Controller
     }
 
     public function forgotPassword(Request $request) {
+      try {
       $input = $request->only('email');
+      $validator = Validator::make($input, [
+        'email' => 'required|email'
+      ]);
+
+    if ($validator->fails()) {
+        return ResponseHandler::errorResponse(
+          'Please check if your email is valid',
+          Response::HTTP_BAD_REQUEST
+        );
+      }
       $user = User::where('email', $input)->first();
       if (!$user) {
         return ResponseHandler::errorResponse(
-          'check if your email is registed',
+          'Please check if your email is registed',
           Response::HTTP_BAD_REQUEST
       );
       }
@@ -165,6 +185,13 @@ class AuthController extends Controller
          null,
          null
       );
+    } catch(\Swift_TransportException $transportExp) {
+      DB::table('password_resets')->where('email', $input['email'])->delete();
+      return ResponseHandler::errorResponse(
+        $transportExp->getMessage(),
+         Response::HTTP_BAD_REQUEST
+        );
+     }
     }
 
     public function resetPassword(Request $request, $reset_code) {
@@ -173,6 +200,16 @@ class AuthController extends Controller
           'reset code has expired',
            Response::HTTP_BAD_REQUEST
           );
+      }
+      $validator = Validator::make($request->only('password'), [
+        'password' => 'required|string|min:6|max:10'
+      ]);
+
+    if ($validator->fails()) {
+        return ResponseHandler::errorResponse(
+          'please check if your password is valid, greater than 6 and less than 10',
+          Response::HTTP_BAD_REQUEST
+        );
       }
       $check = DB::table('password_resets')->where('token', $reset_code)->first();
       if (!is_null($check)) {

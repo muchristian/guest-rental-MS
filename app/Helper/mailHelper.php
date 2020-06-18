@@ -5,22 +5,21 @@ namespace App\Helper;
 use Mail;
 
 trait mailHelper {
-    public function sendMail($view, $attr, $email, $code, $url) {
-        return Mail::send($view, ['firstName'=> $attr, "{$code}"=>$url], function($mail) use ($email) {
-            $mail->from('markjoker73@gmail.com', 'verify email');
-            $mail->to($email);
-            $mail->subject('please verify your email account');
-          });
+    public function sendMail($view, $attr, $email, $code, $url) {  
+        if ("{$code}" === 'verification_code') {
+            $mail = Mail::send($view, ['firstName'=> $attr, "{$code}"=>$url], function($mail) use ($email) {
+                $mail->from('markjoker73@gmail.com', 'verify account');
+                $mail->to($email);
+                $mail->subject('Please verify your email account');
+              }); 
+          } else {
+            $mail = Mail::send($view, ['firstName'=> $attr, "{$code}"=>$url], function($mail) use ($email) {
+                $mail->from('markjoker73@gmail.com', "reset password");
+                $mail->to($email);
+                $mail->subject('Could you please reset your password');
+              });
+          }
+        return $mail;
     }
-
-    public function codeVal($code) {
-        if ($code === 'verification_code') {
-            $title = 'verify email';
-            $subject = 'please verify your email account';
-        } 
-        $title = 'Reset Password';
-        $subject = 'You can reset your password'; 
-        $object = (object) ['title' => $title, 'subject' => $subject];
-        return $object;
-    }   
+   
 }

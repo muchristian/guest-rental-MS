@@ -34,7 +34,7 @@ class RegistrationFormRequest extends FormRequest
             'phoneNumber' => 'required|regex:/[0-9]/|unique:users',
             'gender' => ['required', 'regex:/^Male$|^male$|^Female$|^female$/'],
             'password' => 'required|string|min:6|max:10',
-            'role' => ['required', 'regex:/^CUSTOMER$|^SELLER$|^MANAGER$|^ADMIN$/']
+            'role' => ['required', 'regex:/^MANAGER$|^ADMIN/OWNER$/']
         ];
     }
 
