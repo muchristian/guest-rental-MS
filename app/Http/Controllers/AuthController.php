@@ -60,6 +60,7 @@ class AuthController extends Controller
         $this->sendMail('email.verify',
         $firstname, 
         $email, 
+        'Verify account',
         'verification_code', 
         $verification_code);
         return ResponseHandler::successResponse(
@@ -176,7 +177,8 @@ class AuthController extends Controller
       ]);
       $this->sendMail('password.forgot_password',
       $user->firstName, 
-      $input['email'], 
+      $input['email'],
+      'Reset password', 
       'reset_code', 
       $reset_code);
       return ResponseHandler::successResponse(

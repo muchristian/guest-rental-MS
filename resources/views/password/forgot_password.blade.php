@@ -40,7 +40,7 @@
 <body>
 <div class="verify-container">
 <h1>NY</h1>
-<h4>Hi {{ $firstName }},</h4>
+<h4>Hi {{ $name }},</h4>
 <p>Thank you for using this service. Don't forget to complete your reset password process!.<br>
     Please click on the link below or copy it into the address bar of your browser to confirm your email address:</p>
 <a href="{{ url('user/reset_password', $reset_code)}}">reset password</a>

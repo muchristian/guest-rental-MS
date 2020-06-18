@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use App\Mail\TestEmail;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,4 +27,8 @@ Route::group(['middleware' => ['jwt.verify', 'verifyToken', 'admin']], function 
     Route::post('role/{id}', 'RoleController@assignRole');
 });
 
+Route::get('testmail', function() {
+    $data = ['message' => 'This is a test!'];
+    $mail = Mail::to('mucyochristian2@gmail.com')->send(new TestEmail($data));
+});
 
