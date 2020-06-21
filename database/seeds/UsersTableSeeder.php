@@ -22,7 +22,9 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('markchris32'),
             'role' => 'SUPER_ADMIN',
             'email_verified_at' => $dt->format('Y-m-d H:i:s'),
-            'is_verified' => 1
+            'is_verified' => 1,
+            'created_at' => $dt->format('Y-m-d H:i:s'),
+            'updated_at' => $dt->format('Y-m-d H:i:s')
         ]);
     }
 }

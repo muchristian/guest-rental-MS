@@ -21,14 +21,15 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('phoneNumber');
             $table->string('gender');
+            $table->integer('guest_house_fk')->unsigned()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('avatar', 255)->nullable();
-            $table->string('location')->nullable();
-            $table->string('role');
+            $table->string('role')->default('none');
             $table->rememberToken();
             $table->timestamps();
         });
+
+        
     }
 
     /**

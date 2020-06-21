@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\GuestHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegistrationFormRequest;
@@ -31,10 +32,62 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['jwt.verify', 'verifyToken'], ['except' => ['signup', 'login', 'verifyUser', 'forgotPassword', 'resetPassword']]);
+        $this->middleware(['jwt.verify', 'verifyToken'], ['except' => ['primaryRegistration', 'login', 'verifyUser', 'forgotPassword', 'resetPassword']]);
     }
 
-    public function signup(RegistrationFormRequest $request)
+    public function primaryRegistration(RegistrationFormRequest $request)
+    {
+      $validator = Validator::make($request->all(), [
+        'name' => 'required|unique:guest_houses',
+        'city' => 'required',
+        'sector' => 'required',
+        'logo' => 'max:10000|mimes:png,svg'
+      ]);
+
+    if ($validator->fails()) {
+        return ResponseHandler::errorResponse(
+          $validator->errors(),
+          Response::HTTP_BAD_REQUEST
+        );
+      }
+    $file = $request->file('logo');
+    if ($file) {
+    $filename = $file->getClientOriginalName();
+    $img = $file->move(public_path('uploads'), $filename); 
+    $guestHouse = GuestHouse::create([
+        'name' => $request->name,
+        'slogan' => $request->slogan,
+        'logo' => $img,
+        'location' => $request->city."-".$request->sector,
+    ]);
+    } else {
+      $guestHouse = GuestHouse::create([
+        'name' => $request->name,
+        'slogan' => $request->slogan,
+        'location' => $request->city."-".$request->sector,
+    ]);
+    }
+    
+        $user = User::create([
+          'firstName' => $request->firstName,
+          'lastName' => $request->lastName,
+          'username' => $request->username,
+          'email' => $request->email,
+          'phoneNumber' => $request->phoneNumber,
+          'guest_house_fk' => $guestHouse->id,
+          'gender' => $request->gender,
+          'password' => bcrypt($request->password),
+          'role' => 'ADMIN',
+        ]);
+        return ResponseHandler::successResponse(
+            'user successfully registed', 
+            Response::HTTP_CREATED, 
+            $user, 
+            null
+        );
+    }
+
+    public function userRegistration(RegistrationFormRequest $request)
     {
       
       try{
@@ -94,12 +147,7 @@ class AuthController extends Controller
             Response::HTTP_BAD_REQUEST
     				);
         }
-        $unix = JWTAuth::getPayload($check->token)->get('exp');
-        $date = date('H:i:s', $unix);
-        $curr = new DateTime($date);
-        $curr->add(new DateInterval('PT1H60M'));
-        $output = $curr->format('Y-m-d H:i:s');
-        
+
         $dt = new DateTime();
         $user->update(['is_verified'=>1, 'email_verified_at'=> $dt->format('Y-m-d H:i:s')]);
     		DB::table('user_verifications')->where('token',$verification_code)->delete();

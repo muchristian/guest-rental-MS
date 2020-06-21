@@ -17,8 +17,8 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'firstName', 'lastName', 'username', 'email', 'phoneNumber', 'avatar', 
-        'location', 'gender', 'password', 'role', 'email_verified_at', 'is_verified'
+        'firstName', 'lastName', 'username', 'email', 'phoneNumber', 'guest_house_fk', 
+        'gender', 'password', 'role', 'email_verified_at', 'is_verified'
     ];
 
     /**
@@ -27,7 +27,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token'
     ];
 
     /**
@@ -57,5 +57,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+
+    public function guest_house() {
+        return $this->belongTo('App\GuestHouse');
     }
 }
