@@ -26,16 +26,21 @@ Route::group(['prefix' => 'auth'], function ($router) {
 Route::group([
     'middleware' => ['jwt.verify', 'verifyToken', 'super_admin']
     ], function() {
-        Route::get('users', 'UserController@getAllUsers');
-        Route::get('user/{id}', 'UserController@getOneUser');
-        Route::put('guest-house/update/{id}', 'GuestHouseController@updateGuestHouse');
-        Route::get('guest-house', 'GuestHouseController@getGuestHouse');
-        Route::put('guest-house/status/{id}', 'GuestHouseController@updateGuestHouseStatus');
-        Route::delete('guest-house/delete/{id}', 'GuestHouseController@deleteGuestHouse');
+        
+        
+        
+        
+        
+        
         
     });
+    Route::delete('guest-house/delete/{id}', 'GuestHouseController@deleteGuestHouse');
+    Route::put('guest-house/update/{id}', 'GuestHouseController@updateGuestHouse');
+    Route::put('guest-house/status/{id}', 'GuestHouseController@updateGuestHouseStatus');
+    Route::get('users', 'UserController@getAllUsers');
 Route::post('guest-house/create', 'GuestHouseController@createGuestHouse');
-
+Route::get('user/{id}', 'UserController@getOneUser');
+Route::get('guest-house', 'GuestHouseController@getGuestHouse');
 Route::group(['middleware' => ['jwt.verify', 'verifyToken', 'admin']], function () {
     Route::get('roles', 'RoleController@getAllRoles');
     Route::post('role/{id}', 'RoleController@assignRole');

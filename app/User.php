@@ -60,7 +60,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
-    public function guest_house() {
-        return $this->belongTo('App\GuestHouse');
+    public function guest_houses() {
+        return $this->belongsTo('App\GuestHouse', 'guest_house_fk');
     }
 }
