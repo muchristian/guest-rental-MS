@@ -16,7 +16,12 @@ class UserController extends Controller
             $query->where('role', 'ADMIN');
             $query->orWhere('role', 'MANAGER');
         })->paginate(10);
-        return UserResource::collection($users);
+        return ResponseHandler::successResponse(
+            'All users returned successfully', 
+            Response::HTTP_OK,
+            UserResource::collection($users),
+            null
+        );
     }
 
     public function getOneUser($id) {
@@ -27,6 +32,11 @@ class UserController extends Controller
                 Response::HTTP_BAD_REQUEST
               ); 
         }
-        return new UserResource($user);
+        return ResponseHandler::successResponse(
+            'A user returned successfully', 
+            Response::HTTP_OK,
+            new UserResource($user),
+            null
+        );
     }
 }

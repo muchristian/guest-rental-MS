@@ -78,6 +78,7 @@ class AuthController extends Controller
           'gender' => $request->gender,
           'password' => bcrypt($request->password),
           'role' => 'ADMIN',
+          'is_verified' => 1
         ]);
         return ResponseHandler::successResponse(
             'user successfully registed', 
@@ -183,12 +184,16 @@ class AuthController extends Controller
         );
       } else {
         $user = User::where($field, $username)->first();
-        if ($user->is_verified !== 1) {
-            return ResponseHandler::errorResponse(
-                'check if you have verified your email',
+        
+          if ($user->role !== 'SUPER_ADMIN') {
+            if ($user->guest_houses->status !== 'approved') {
+              return ResponseHandler::errorResponse(
+                'You can not logged in, yet your guest house has not been approved',
                 Response::HTTP_UNAUTHORIZED
             );
+            }
           }
+        
             return ResponseHandler::successResponse(
               'user successfully logged in',
                Response::HTTP_OK,

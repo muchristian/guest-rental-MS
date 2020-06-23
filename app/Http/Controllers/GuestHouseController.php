@@ -264,9 +264,44 @@ class GuestHouseController extends Controller
     }
 
 
-
     public function getGuestHouse() {
         $guestHouse = GuestHouse::paginate(6);
+        return ResponseHandler::successResponse(
+            'All Guest house returned successfully', 
+            Response::HTTP_OK,
+            GuestHouseResource::collection($guestHouse),
+            null
+        );
+    }
+
+    public function getOneHouse($id) {
+        $guestHouse = GuestHouse::find($id);
+        if (!$guestHouse) {
+            return ResponseHandler::errorResponse(
+                'A passed guest house not found',
+                Response::HTTP_BAD_REQUEST
+              ); 
+        }
+        return ResponseHandler::successResponse(
+            'A user returned successfully', 
+            Response::HTTP_OK,
+            new GuestHouseResource($guestHouse),
+            null
+        );
+    }
+
+    public function getPendingGuestHouses() {
+        $guestHouse = GuestHouse::where('status', 'pending')->paginate(6);
+        return ResponseHandler::successResponse(
+            'All Guest house returned successfully', 
+            Response::HTTP_OK,
+            GuestHouseResource::collection($guestHouse),
+            null
+        );
+    }
+
+    public function getApprovedGuestHouses() {
+        $guestHouse = GuestHouse::where('status', 'approved')->paginate(6);
         return ResponseHandler::successResponse(
             'All Guest house returned successfully', 
             Response::HTTP_OK,

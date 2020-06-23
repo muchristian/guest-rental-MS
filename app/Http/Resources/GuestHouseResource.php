@@ -19,7 +19,8 @@ class GuestHouseResource extends JsonResource
             'slogan' => $this->slogan,
             'location' => $this->location,
             'logo' => $this->logo,
-            'admin' => $this->users[0]->firstName." ".$this->users[0]->lastName
+            'admin' => $this->users[0]->firstName." ".$this->users[0]->lastName,
+            'create_at' => $this->created_at
         ];
     }
 }
