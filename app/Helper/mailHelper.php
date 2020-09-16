@@ -6,10 +6,10 @@ use Mail;
 use App\Mail\TestEmail;
 
 trait mailHelper {
-    public function sendMail($view, $firstname, $to, $subject, $code, $url) {  
+    public function sendMail($view, $username, $to, $subject, $code, $url) {  
     $data = [
         'view' => $view,
-        'name' => "{$firstname}", 
+        'name' => "{$username}", 
         'url' => $url, 
         'subject' => $subject,
         'code' => $code

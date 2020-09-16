@@ -8,7 +8,13 @@ use App\GuestHouse;
 use Symfony\Component\HttpFoundation\Response;
 use App\Helper\ResponseHandler;
 use App\Http\Resources\GuestHouseResource;
+use App\Http\Resources\GuestHouseGetOneResource;
 use App\Helper\mailHelper;
+use App\Helper\UploadHelper;
+use App\Http\Requests\GuestHouseRequest;
+use App\Http\Requests\UpdateGHStatusRequest;
+use App\Events\GHStatusApprovedUpdate;
+use App\Events\GHStatusRejectedUpdate;
 
 class GuestHouseController extends Controller
 {
@@ -16,171 +22,43 @@ class GuestHouseController extends Controller
     use mailHelper;
 
 
-    public function createGuestHouse(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:guest_houses',
-            'city' => 'required',
-            'sector' => 'required',
-            'logo' => 'max:10000|mimes:png,svg'
-          ]);
-    
-        if ($validator->fails()) {
-            return ResponseHandler::errorResponse(
-              $validator->errors(),
-              Response::HTTP_BAD_REQUEST
-            );
-          }
-        $file = $request->file('logo');
-        if ($file) {
-        $filename = $file->getClientOriginalName();
-        $img = $file->move(public_path('uploads'), $filename); 
+    public function createGuestHouse(GuestHouseRequest $request) {
         $guestHouse = GuestHouse::create([
             'name' => $request->name,
             'slogan' => $request->slogan,
-            'logo' => $img,
+            'logo' => UploadHelper::fileUpload($request->file('logo'), 'upload'),
             'location' => $request->city."-".$request->sector,
         ]);
-        }
-        $guestHouse = GuestHouse::create([
-            'name' => $request->name,
-            'slogan' => $request->slogan,
-            'location' => $request->city."-".$request->sector,
-        ]);
-
         return ResponseHandler::successResponse(
             'Guest house registed successfully', 
             Response::HTTP_CREATED, 
-            $guestHouse,
+            new GuestHouseResource($guestHouse),
             null
         );
     }
 
 
-
-    public function updateGuestHouse(Request $request, $id) {
-        try {
-        $guestHouse = GuestHouse::find($id);
-        if (!$guestHouse) {
-            return ResponseHandler::errorResponse(
-                'A passed guest house not found',
-                Response::HTTP_BAD_REQUEST
-              ); 
-        }
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:guest_houses',
-            'city' => 'required',
-            'sector' => 'required',
-            'logo' => 'max:10000|mimes:png,svg',
-            'status' => ['required', 'regex:/^pending$|^approved$|^rejected$/']
-          ]);
-    
-        if ($validator->fails()) {
-            return ResponseHandler::errorResponse(
-              $validator->errors(),
-              Response::HTTP_BAD_REQUEST
-            );
-          }
-
-        $file = $request->file('logo');
-        if ($file) {
-            $filename = $file->getClientOriginalName();
-        $img = $file->move(public_path('uploads'), $filename); 
-        $guestHouse = GuestHouse::where('id', $id)
-        ->update([
-            'name' => $request->name,
-            'slogan' => $request->slogan,
-            'logo' => $img,
-            'location' => $request->city."-".$request->sector,
-            'status' => $request->status
-        ]);
-        }
-        $status = $guestHouse->status;
+    public function updateGuestHouse(GuestHouseRequest $request, $name) {
+        $guestHouse = GuestHouse::where('name', $name)->firstOrFail();
+        
         $guestHouse->update([
             'name' => $request->name,
             'slogan' => $request->slogan,
-            'location' => $request->city."-".$request->sector,
-            'status' => $request->status
+            'logo' => UploadHelper::fileUpload($request->file('logo'), 'upload'),
+            'location' => $request->city."-".$request->sector
         ]);
-        if ($request->status === $status) {
-            return ResponseHandler::successResponse(
-                'Guest house updated successfully, but is already assigned to that status', 
-                Response::HTTP_OK,
-                null,
-                null
-            );
-        }
-        switch($request->status) {
-            case 'approved':   
-                $this->sendMail('guest_house.approved',
-                    $guestHouse->users[0]->firstName, 
-                    $guestHouse->users[0]->email, 
-                    'announcing email for approval',
-                    null, 
-                    null
-                );
-                return ResponseHandler::successResponse(
-                    'Guest house updated successfully with approved status', 
-                    Response::HTTP_OK,
-                    null,
-                    null
-                );
-            case 'rejected':
-                $this->sendMail('guest_house.rejected',
-                    $guestHouse->users[0]->firstName, 
-                    $guestHouse->users[0]->email, 
-                    'announcing email for rejected',
-                    null, 
-                    null
-                );
-                if ($guestHouse) {
-                    $guestHouse->delete();
-                }
-                return ResponseHandler::successResponse(
-                    'Guest house updated successfully with rejected status', 
-                    Response::HTTP_OK,
-                    null,
-                    null
-                );
-            default:
-            return ResponseHandler::successResponse(
-                'Guest house updated successfully with pending status', 
-                Response::HTTP_OK,
-                null,
-                null
-            );
-        }
-    } catch(\Swift_TransportException $transportExp) {
-        $guestHouse->update([
-            'status' => $status
-        ]);
-        return ResponseHandler::errorResponse(
-          $transportExp->getMessage(),
-           Response::HTTP_BAD_REQUEST
-          );
-       }
+        return ResponseHandler::successResponse(
+            'A guest house updated successfully', 
+            Response::HTTP_OK,
+            new GuestHouseResource($guestHouse),
+            null
+        );
     }
 
 
-
-    public function updateGuestHouseStatus(Request $request, $id) {
+    public function updateGuestHouseStatus(UpdateGHStatusRequest $request, $name) {
         try {
-        $guestHouse = GuestHouse::find($id);
-        if (!$guestHouse) {
-            return ResponseHandler::errorResponse(
-                'A passed guest house not found',
-                Response::HTTP_BAD_REQUEST
-              ); 
-        }
-        $validator = Validator::make($request->all(), [
-            'status' => ['required', 'regex:/^pending$|^approved$|^rejected$/'],
-          ]);
-    
-        if ($validator->fails()) {
-            return ResponseHandler::errorResponse(
-              'Status should be pending | approved | rejected',
-              Response::HTTP_BAD_REQUEST
-            );
-          }
+        $guestHouse = GuestHouse::where('name', $name)->firstOrFail();
         $status = $guestHouse->status;
         $guestHouse->update([
             'status' => $request->status
@@ -193,32 +71,19 @@ class GuestHouseController extends Controller
                 null
             );
         }
+        
         switch($request->status) {
-            case 'approved':
-                $this->sendMail('guest_house.approved',
-                    $guestHouse->users[0]->firstName, 
-                    $guestHouse->users[0]->email, 
-                    'announcing email for approval',
-                    null, 
-                    null
-                );
+            case 'approved': 
+                event(new GHStatusApprovedUpdate($guestHouse));
                 return ResponseHandler::successResponse(
-                    'your Guest house were approved successfully', 
+                    'Guest house status updated to approved successfully', 
                     Response::HTTP_OK,
-                    null,
+                    new GuestHouseResource($guestHouse),
                     null
                 );
             case 'rejected':
-                $this->sendMail('guest_house.rejected',
-                    $guestHouse->users[0]->firstName, 
-                    $guestHouse->users[0]->email, 
-                    'announcing email for rejected',
-                    null, 
-                    null
-                );
-                if ($guestHouse) {
-                    $guestHouse->delete();
-                }
+                event(new GHStatusRejectedUpdate($guestHouse));
+                $guestHouse->delete();
                 return ResponseHandler::successResponse(
                     'Guest house status updated to rejected successfully', 
                     Response::HTTP_OK,
@@ -226,13 +91,15 @@ class GuestHouseController extends Controller
                     null
                 );
             default:
-                return ResponseHandler::successResponse(
-                    'Guest house status updated successfully as pending', 
-                    Response::HTTP_OK,
-                    null,
-                    null
-                );
+            return ResponseHandler::successResponse(
+                'Guest house status updated successfully as pending', 
+                Response::HTTP_OK,
+                new GuestHouseResource($guestHouse),
+                null
+            );
         }
+            
+        
     } catch(\Swift_TransportException $transportExp) {
         $guestHouse->update([
             'status' => $status
@@ -245,27 +112,8 @@ class GuestHouseController extends Controller
     }
 
 
-
-    public function deleteGuestHouse($id) {
-        $guestHouse = GuestHouse::find($id);
-        if (!$guestHouse) {
-            return ResponseHandler::errorResponse(
-                'A passed guest house not found',
-                Response::HTTP_BAD_REQUEST
-              ); 
-        }
-        $guestHouse->delete();
-        return ResponseHandler::successResponse(
-            'Guest house deleted successfully', 
-            Response::HTTP_OK,
-            null,
-            null
-        );
-    }
-
-
     public function getGuestHouse() {
-        $guestHouse = GuestHouse::paginate(6);
+        $guestHouse = GuestHouse::all();
         return ResponseHandler::successResponse(
             'All Guest house returned successfully', 
             Response::HTTP_OK,
@@ -274,24 +122,29 @@ class GuestHouseController extends Controller
         );
     }
 
-    public function getOneHouse($id) {
-        $guestHouse = GuestHouse::find($id);
-        if (!$guestHouse) {
-            return ResponseHandler::errorResponse(
-                'A passed guest house not found',
-                Response::HTTP_BAD_REQUEST
-              ); 
-        }
+
+    public function getOneHouse($name) {
+        $guestHouse = GuestHouse::where('name', $name)->firstOrFail();
         return ResponseHandler::successResponse(
             'A user returned successfully', 
             Response::HTTP_OK,
-            new GuestHouseResource($guestHouse),
+            new GuestHouseGetOneResource($guestHouse),
+            null
+        );
+    }
+
+    public function editHouse($name) {
+        $guestHouse = GuestHouse::where('name', $name)->firstOrFail();
+        return ResponseHandler::successResponse(
+            'A user returned successfully', 
+            Response::HTTP_OK,
+            $guestHouse,
             null
         );
     }
 
     public function getPendingGuestHouses() {
-        $guestHouse = GuestHouse::where('status', 'pending')->paginate(6);
+        $guestHouse = GuestHouse::where('status', 'pending')->all();
         return ResponseHandler::successResponse(
             'All Guest house returned successfully', 
             Response::HTTP_OK,
@@ -301,11 +154,23 @@ class GuestHouseController extends Controller
     }
 
     public function getApprovedGuestHouses() {
-        $guestHouse = GuestHouse::where('status', 'approved')->paginate(6);
+        $guestHouse = GuestHouse::where('status', 'approved')->all();
         return ResponseHandler::successResponse(
             'All Guest house returned successfully', 
             Response::HTTP_OK,
             GuestHouseResource::collection($guestHouse),
+            null
+        );
+    }
+    
+
+    public function deleteGuestHouse($name) {
+        $guestHouse = GuestHouse::where('name', $name)->firstOrFail();
+        $guestHouse->delete();
+        return ResponseHandler::successResponse(
+            'Guest house deleted successfully', 
+            Response::HTTP_OK,
+            null,
             null
         );
     }

@@ -8,38 +8,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 use App\User;
 use App\Helper\RoleHelper;
+use App\Http\Requests\RoleRequest;
 
 class RoleController extends Controller
 {
-    public function getAllRoles() {
+    public function getAllRoles(Request $request) {
         return ResponseHandler::successResponse(
             'Successfully returned all roles',
             Response::HTTP_OK,
-            RoleHelper::Roles(),
+            RoleHelper::Roles($request->token->role),
             null
         );
     }
 
-    public function assignRole(Request $request, $id) {
-        $user = User::find($id);
-        if (!$user) {
-            return ResponseHandler::errorResponse(
-                'Requested user does not exist',
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-        $validator = Validator::make($request->all(), [
-            'role' => 'required',
-        ]);
+    public function assignRole(RoleRequest $request, $username) {
+        $user = User::where('username', $username)->firstOrFail();
 
-        if ($validator->fails()) {
-            return ResponseHandler::errorResponse(
-                'Please fill out the role',
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-
-        if (!in_array($request->role, RoleHelper::Roles())){
+        if (!in_array($request->role, RoleHelper::Roles($request->token->role))){
             return ResponseHandler::errorResponse(
                 'The full filled role that does not exist',
                 Response::HTTP_BAD_REQUEST

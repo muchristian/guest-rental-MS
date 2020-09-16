@@ -1,0 +1,18 @@
+* {
+    box-sizing: border-box;
+}
+
+body{
+    background: #fafafa;
+}
+
+.signup {
+    background: white;
+    box-shadow: 2px 2px 1px #f1f1f1;
+    padding: 10px;
+    max-width: 360px;
+    margin: auto;
+}
+.form-holder {
+    display: flex;
+}

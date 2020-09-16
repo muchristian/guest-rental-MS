@@ -1,0 +1,73 @@
+
+.auth-container {
+    width: 100%;
+    height: calc(100vh - 18px);
+}
+
+.auth-image {
+    height: 100%;
+    background-image: url('../js/components/Login/15840.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.auth-content {
+    height: 100%;
+    background: $white;
+    padding: 0 5px 0 5px;
+    display: flex;
+    align-items: center;
+    border: 1px solid $base;
+    form {
+        p.fp-link {
+            margin-top: -1em;
+         a {
+            text-decoration: none;
+            color: #3f51b5;
+            font-size: small;
+            &:hover {
+                color: #5c6bc0;
+            }
+        }
+        }
+        button {
+            border-radius: 0;
+            color: $white;
+            background: #3f51b5;
+            transition: all 300ms ease-in-out;
+            &:hover {
+                background: #5c6bc0;
+                color: $white;
+            }
+        }
+    }
+}
+
+.login-head, .forget-pw-head, .signup-head {
+    h2 {
+        text-transform: uppercase;
+        color: $head;
+    }
+    p {
+        color: $text;
+        a {
+            text-decoration: none;
+            color: #3f51b5;
+            &:hover {
+                color: #5c6bc0;
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .login-form {
+        flex: 0 0 66.6666666667%;
+        max-width: 66.6666666667%;
+    }
+    .authimage-container {
+        flex: 0 0 0%;
+        max-width: 0%;
+    }
+}

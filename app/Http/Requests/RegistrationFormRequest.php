@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Http\Request;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -24,7 +25,7 @@ class RegistrationFormRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
         return [
             'firstName' => 'required|regex:/^([a-zA-Z]{3,})+$/',
@@ -34,7 +35,7 @@ class RegistrationFormRequest extends FormRequest
             'phoneNumber' => 'required|regex:/[0-9]/|unique:users',
             'gender' => ['required', 'regex:/^Male$|^male$|^Female$|^female$/'],
             'password' => 'required|string|min:6|max:10',
-            'role' => ['required', 'regex:/^MANAGER$|^ADMIN$/']
+            'role' => 'regex:/^MANAGER$|^ADMIN$|^ACCOUNTANT$/'
         ];
     }
 

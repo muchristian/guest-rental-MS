@@ -21,7 +21,8 @@ class JwtVerify extends BaseMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $token= str_replace('Bearer ', "" , $request->header('Authorization'));
+        
+            $token= str_replace('Bearer ', "" , $request->header('Authorization'));
             try {
                 if (!JWTAuth::setToken($token)->getPayload()) {
                     return response()->json([

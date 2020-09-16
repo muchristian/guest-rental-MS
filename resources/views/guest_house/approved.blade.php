@@ -9,12 +9,11 @@
         box-sizing:border-box;
     }
     .verify-container {
-        background:white;
+        background:#fafafa;
         text-align: center;
         margin: auto;
         max-width: 800px;
         height: 350px;
-        border-top: 3px solid dodgerblue;
     }
     .verify-container h1 {
         padding-top: 25px;
@@ -41,7 +40,7 @@
 <div class="verify-container">
 <h1>NY</h1>
 <h4>Hi {{ $name }},</h4>
-<p>Well done your guest house has been approved, now you can log in.</p>
+<p>Well done, your guest house has been approved. Now you can login</p>
 </div>
 </body>
 </html>

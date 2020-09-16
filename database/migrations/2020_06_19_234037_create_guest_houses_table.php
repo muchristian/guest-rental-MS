@@ -19,6 +19,7 @@ class CreateGuestHousesTable extends Migration
             $table->string('slogan')->nullable();
             $table->string('logo', 255)->nullable();
             $table->string('location');
+            $table->string('mode')->default('active');
             $table->string('status')->default('pending');
             $table->timestamps();
         });

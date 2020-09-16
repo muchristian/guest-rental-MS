@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegistrationFormRequest;
 use App\Http\Requests\LoginFormRequest;
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use Illuminate\Support\Facades\Validator;
 use DB;
 use DateTime;
@@ -19,6 +21,11 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Helper\ResponseHandler;
 use App\Helper\mailHelper;
 use App\Helper\jwtHelper;
+use App\Helper\UploadHelper;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\UserGetOneResource;
+use App\Events\Registered;
+use App\Events\ForgetPassword;
 
 class AuthController extends Controller
 {
@@ -32,63 +39,68 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(['jwt.verify', 'verifyToken'], ['except' => ['primaryRegistration', 'login', 'verifyUser', 'forgotPassword', 'resetPassword']]);
+        $this->middleware(['jwt.verify', 'verifyToken'], ['except' => ['firstRegistration', 'login', 'verifyUser', 'forgotPassword', 'resetPassword']]);
     }
 
-    public function primaryRegistration(RegistrationFormRequest $request)
+    public function firstRegistration(RegistrationFormRequest $request)
     {
-      $validator = Validator::make($request->all(), [
-        'name' => 'required|unique:guest_houses',
-        'city' => 'required',
-        'sector' => 'required',
-        'logo' => 'max:10000|mimes:png,svg'
-      ]);
-
-    if ($validator->fails()) {
-        return ResponseHandler::errorResponse(
-          $validator->errors(),
-          Response::HTTP_BAD_REQUEST
-        );
-      }
-    $file = $request->file('logo');
-    if ($file) {
-    $filename = $file->getClientOriginalName();
-    $img = $file->move(public_path('uploads'), $filename); 
-    $guestHouse = GuestHouse::create([
-        'name' => $request->name,
-        'slogan' => $request->slogan,
-        'logo' => $img,
-        'location' => $request->city."-".$request->sector,
-    ]);
-    } else {
-      $guestHouse = GuestHouse::create([
-        'name' => $request->name,
-        'slogan' => $request->slogan,
-        'location' => $request->city."-".$request->sector,
-    ]);
-    }
-    
-        $user = User::create([
-          'firstName' => $request->firstName,
-          'lastName' => $request->lastName,
-          'username' => $request->username,
-          'email' => $request->email,
-          'phoneNumber' => $request->phoneNumber,
-          'guest_house_fk' => $guestHouse->id,
-          'gender' => $request->gender,
-          'password' => bcrypt($request->password),
-          'role' => 'ADMIN',
-          'is_verified' => 1
+      try {
+        $validator = Validator::make($request->all(), [
+          'name' => 'required|unique:guest_houses',
+          'city' => 'required',
+          'sector' => 'required',
+          'logo' => 'max:10000|mimes:png,svg'
         ]);
-        return ResponseHandler::successResponse(
-            'user successfully registed', 
-            Response::HTTP_CREATED, 
-            $user, 
-            null
-        );
+  
+      if ($validator->fails()) {
+          return ResponseHandler::errorResponse(
+            $validator->errors(),
+            Response::HTTP_BAD_REQUEST
+          );
+        }
+      $guestHouse = GuestHouse::create([
+          'name' => $request->name,
+          'slogan' => $request->slogan,
+          'logo' => UploadHelper::fileUpload($request->file('logo'), 'upload'),
+          'location' => $request->city."-".$request->sector,
+      ]);
+      
+          $user = User::create([
+            'firstName' => $request->firstName,
+            'lastName' => $request->lastName,
+            'username' => $request->username,
+            'email' => $request->email,
+            'phoneNumber' => $request->phoneNumber,
+            'guest_house_fk' => $guestHouse->id,
+            'gender' => $request->gender,
+            'password' => bcrypt($request->password),
+            'role' => 'ADMIN',
+          ]);
+        $verification_code = auth()->login($user);
+        DB::table('user_verifications')->insert([
+          'user_id' => $user->id,
+          'token' => $verification_code
+        ]);
+        event(new Registered($user, $verification_code));
+          return ResponseHandler::successResponse(
+              'Well done, you successfully registered your guesthouse as an admin; verify your account and wait patiently for our response, if your guest house has been approved or rejected, through your email account.', 
+              Response::HTTP_CREATED, 
+              new UserResource($user), 
+              $this->respondWithToken($verification_code)
+          );
+      } catch(\Swift_TransportException $transportExp) {
+        User::where('email', $request->email)->delete();
+        GuestHouse::where('name', $request->name)->delete();
+        return ResponseHandler::errorResponse(
+          $transportExp->getMessage(),
+           Response::HTTP_BAD_REQUEST
+          );
+       }
+      
     }
 
-    public function userRegistration(RegistrationFormRequest $request)
+
+    public function secondRegistration(RegistrationFormRequest $request)
     {
       
       try{
@@ -98,6 +110,7 @@ class AuthController extends Controller
           'username' => $request->username,
           'email' => $request->email,
           'phoneNumber' => $request->phoneNumber,
+          'guest_house_fk' => $request->token->guest_house_fk ? $request->token->guest_house_fk : $request->guest_house_fk,
           'gender' => $request->gender,
           'password' => bcrypt($request->password),
           'role' => $request->role,
@@ -108,19 +121,11 @@ class AuthController extends Controller
           'user_id' => $user->id,
           'token' => $verification_code
         ]);
-        $firstname = $request->firstName;
-        $lastname = $request->lastname;
-        $email = $request->email;
-        $this->sendMail('email.verify',
-        $firstname, 
-        $email, 
-        'Verify account',
-        'verification_code', 
-        $verification_code);
+        event(new Registered($user, $verification_code));
         return ResponseHandler::successResponse(
             'user successfully registed', 
             Response::HTTP_CREATED, 
-            $user, 
+            new UserResource($user), 
             $this->respondWithToken($verification_code)
         );
      } catch(\Swift_TransportException $transportExp) {
@@ -132,8 +137,10 @@ class AuthController extends Controller
      }
     }
 
+
     public function verifyUser($verification_code){
       if ($this->expDate($verification_code) > $this->expDate($verification_code)) {
+        DB::table('user_verifications')->where('token',$verification_code)->delete();
         return ResponseHandler::errorResponse(
           'verification code has expired',
            Response::HTTP_BAD_REQUEST
@@ -183,8 +190,13 @@ class AuthController extends Controller
          Response::HTTP_UNAUTHORIZED
         );
       } else {
-        $user = User::where($field, $username)->first();
-        
+        $user = User::where($field, $username)->firstOrFail();
+        if ($user->is_verified !== 1) {
+          return ResponseHandler::errorResponse(
+              'check if you have verified your account',
+              Response::HTTP_UNAUTHORIZED
+          );
+      }
           if ($user->role !== 'SUPER_ADMIN') {
             if ($user->guest_houses->status !== 'approved') {
               return ResponseHandler::errorResponse(
@@ -203,37 +215,17 @@ class AuthController extends Controller
       }
     }
 
-    public function forgotPassword(Request $request) {
+
+    public function forgotPassword(ForgotPasswordRequest $request) {
       try {
       $input = $request->only('email');
-      $validator = Validator::make($input, [
-        'email' => 'required|email'
-      ]);
-
-    if ($validator->fails()) {
-        return ResponseHandler::errorResponse(
-          'Please check if your email is valid',
-          Response::HTTP_BAD_REQUEST
-        );
-      }
-      $user = User::where('email', $input)->first();
-      if (!$user) {
-        return ResponseHandler::errorResponse(
-          'Please check if your email is registed',
-          Response::HTTP_BAD_REQUEST
-      );
-      }
+      $user = User::where('email', $input)->firstOrFail();
       $reset_code = JWTAuth::fromUser($user);
       DB::table('password_resets')->insert([
         'email' => $input['email'],
         'token' => $reset_code
       ]);
-      $this->sendMail('password.forgot_password',
-      $user->firstName, 
-      $input['email'],
-      'Reset password', 
-      'reset_code', 
-      $reset_code);
+      event(new ForgetPassword($user, $reset_code));
       return ResponseHandler::successResponse(
         'reset mail sent successfully',
          Response::HTTP_OK,
@@ -249,26 +241,18 @@ class AuthController extends Controller
      }
     }
 
-    public function resetPassword(Request $request, $reset_code) {
+
+    public function resetPassword(ResetPasswordRequest $request, $reset_code) {
       if ($this->expDate($reset_code) > $this->expDate($reset_code)) {
         return ResponseHandler::errorResponse(
           'reset code has expired',
            Response::HTTP_BAD_REQUEST
           );
       }
-      $validator = Validator::make($request->only('password'), [
-        'password' => 'required|string|min:6|max:10'
-      ]);
 
-    if ($validator->fails()) {
-        return ResponseHandler::errorResponse(
-          'please check if your password is valid, greater than 6 and less than 10',
-          Response::HTTP_BAD_REQUEST
-        );
-      }
       $check = DB::table('password_resets')->where('token', $reset_code)->first();
       if (!is_null($check)) {
-        $user = User::where('email', $check->email)->first();
+        $user = User::where('email', $check->email)->firstOrFail();
         User::where('id', $user->id)
           ->update(['password' => bcrypt($request->password)]);
           DB::table('password_resets')->where('token', $reset_code)->delete();
@@ -285,16 +269,26 @@ class AuthController extends Controller
         );
     }
 
+
     public function getAuthUser(Request $request)
     {
-        return auth()->user();
+        return ResponseHandler::successResponse(
+    		  'User successfully returned',
+          Response::HTTP_OK,
+          new UserGetOneResource(auth()->user()),
+          null
+        );
     }
+
+
     public function logout()
     {
         auth()->logout();
         return response()->json(
           ['message'=>'Successfully logged out']);
     }
+
+
     protected function respondWithToken($token)
     {
         return $token;

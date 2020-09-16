@@ -14,8 +14,6 @@
 
 date_default_timezone_set("africa/Kigali");
 
-Route::get('/', function () {
-    return "welcome dude";
-});
+Route::view('/{path?}', 'welcome');
 Route::get('user/verify/{verification_code}', 'AuthController@verifyUser');
 Route::get('user/reset_password/{reset_code}', 'AuthController@resetPassword');

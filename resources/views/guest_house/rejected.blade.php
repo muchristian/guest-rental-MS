@@ -9,12 +9,11 @@
         box-sizing:border-box;
     }
     .verify-container {
-        background:white;
+        background:#fafafa;
         text-align: center;
         margin: auto;
         max-width: 800px;
         height: 350px;
-        border-top: 3px solid dodgerblue;
     }
     .verify-container h1 {
         padding-top: 25px;
@@ -41,8 +40,9 @@
 <div class="verify-container">
 <h1>NY</h1>
 <h4>Hi {{ $name }},</h4>
-<p>Unfortunately, your guest house has been rejected, because doesn't exist.<br>
-You can correct by just registing your account and guest house again</p>
+<p>Thank you for your submission. We have reviewed your guest house, 
+and unfortunately, we found it doesn't exist. 
+Make sure that your guest house exits, and register again.</p>
 </div>
 </body>
 </html>

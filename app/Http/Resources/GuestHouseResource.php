@@ -15,11 +15,14 @@ class GuestHouseResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
-            'slogan' => $this->slogan,
             'location' => $this->location,
-            'logo' => $this->logo,
-            'admin' => $this->users[0]->firstName." ".$this->users[0]->lastName,
+            'status' => $this->status,
+            'user' => $this->users,
+            'rooms' => $this->rooms,
+            'guests' => $this->guests,
+            'services' => $this->services,
             'create_at' => $this->created_at
         ];
     }
