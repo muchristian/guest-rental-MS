@@ -66,7 +66,8 @@ class UserView extends Component {
             elType: 'select',
             elementConfig: {
                 type: "select",
-                options: ['male', 'female'],
+                options: [{ value: 'male', label: 'male' },
+                { value: 'female', label: 'female' }],
                 class: "form-group"
             }
         },
@@ -105,7 +106,7 @@ render() {
                   </div>
               ))}
               </div>
-              <div className="mt-1 pl-2 pr-2"><Button btnType="button" text="Signup"/></div>
+              <div className="mt-1 pl-2 pr-2"><Button btnType="button" text="Update"/></div>
           </form>
       );
     return (

@@ -7,9 +7,6 @@ import Userview from './User/UserView';
 import { Route, Switch } from 'react-router-dom';
 
 export default class App extends Component {
-    componentDidMount () {
-        window.$('select').selectpicker();
-    }
     render() {
     
         return (

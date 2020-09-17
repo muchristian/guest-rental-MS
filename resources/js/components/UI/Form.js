@@ -1,4 +1,5 @@
 import React, {Fragment} from 'react';
+import Select from 'react-select';
 
 const Form = (props) => {
     let inputElement = null;
@@ -10,11 +11,9 @@ const Form = (props) => {
         break;
         case 'select':
         inputElement = (
-            <select {...props.elementConfig} class="selectpicker form-control">
-            {props.elementConfig.options.map(option => (
-                <option key={option}>{option}</option>
-            ))}
-            </select>
+            <Select 
+            defaultValue={props.elementConfig.options[0]}
+            options={props.elementConfig.options}/>
             )
         break;
         default:

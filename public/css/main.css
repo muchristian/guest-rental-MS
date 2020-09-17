@@ -89,53 +89,59 @@ body {
   border-radius: 0;
 }
 
-.btn:focus:focus {
-  outline: 0px !important;
-  -webkit-appearance: none;
-  box-shadow: none !important;
-}
-
-.btn-light {
-  color: rgba(0, 0, 0, 0.7);
-  background-color: transparent;
-}
-
-.btn-light:hover {
+.css-yk16xz-control {
   background-color: #f8fafc;
-  border-color: #3f51b5;
 }
 
-.btn-light:focus {
-  background-color: transparent;
-}
-
-.btn-light:not(:disabled):not(.disabled):active,
-.btn-light:not(:disabled):not(.disabled).active,
-.show > .btn-light.dropdown-toggle {
-  color: rgba(0, 0, 0, 0.7);
-  background-color: #f8fafc;
-  border-color: #3f51b5;
-}
-
-.bootstrap-select .dropdown-toggle:focus,
-.bootstrap-select select.mobile-device:focus + .dropdown-toggle {
-  outline: 0px !important;
-  -webkit-appearance: none;
-  box-shadow: none !important;
-}
-
-.bootstrap-select button {
+.css-yk16xz-control,
+.css-1pahdxg-control {
   height: 55px;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
-.bootstrap-select button .filter-option {
-  display: flex;
-  align-items: center;
+.css-yk16xz-control:focus,
+.css-1pahdxg-control:focus {
+  border-color: #3f51b5 !important;
+  outline: 0px !important;
+  -webkit-appearance: none;
+  box-shadow: none !important;
+}
+
+.css-26l3qy-menu {
+  border-radius: 0 !important;
+  margin-top: 2px !important;
+}
+
+.css-4ljt47-MenuList {
+  padding-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+
+.css-yt9ioa-option,
+.css-1n7v3ny-option,
+.css-9gakcf-option,
+.css-1uccc91-singleValue {
+  cursor: pointer !important;
+}
+
+.css-yt9ioa-option,
+.css-1n7v3ny-option,
+.css-1uccc91-singleValue {
+  cursor: pointer !important;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.css-9gakcf-option {
+  background-color: #3f51b5 !important;
+}
+
+.css-1n7v3ny-option {
+  background-color: #e8eaf6 !important;
 }
 
 input[type=text],
@@ -164,6 +170,24 @@ input[type=email]:focus + label,
 input[type=password]:focus + label,
 input[type=radio]:focus + label {
   color: #3f51b5;
+}
+
+button[action=Signup],
+button[action=Login],
+button[action=Submit],
+button[action=Update] {
+  border-radius: 0;
+  color: #ffffff;
+  background: #3f51b5;
+  transition: all 300ms ease-in-out;
+}
+
+button[action=Signup]:hover,
+button[action=Login]:hover,
+button[action=Submit]:hover,
+button[action=Update]:hover {
+  background: #5c6bc0;
+  color: #ffffff;
 }
 
 a {
@@ -197,11 +221,10 @@ p {
 }
 
 .dropdown-item:hover,
-.dropdown-item:focus,
-a:not([href]):hover {
+.dropdown-item:focus {
   color: #ffffff;
   text-decoration: none;
-  background-color: #3f51b5;
+  background-color: #7986cb;
 }
 
 .dropdown-item.active,
@@ -252,18 +275,6 @@ a:not([href]):hover {
 
 .auth-content form p.fp-link a:hover {
   color: #5c6bc0;
-}
-
-.auth-content form button {
-  border-radius: 0;
-  color: #ffffff;
-  background: #3f51b5;
-  transition: all 300ms ease-in-out;
-}
-
-.auth-content form button:hover {
-  background: #5c6bc0;
-  color: #ffffff;
 }
 
 .login-head h2,

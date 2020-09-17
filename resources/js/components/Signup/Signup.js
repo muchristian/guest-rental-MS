@@ -67,7 +67,8 @@ export default class Signup extends Component {
                 elType: 'select',
                 elementConfig: {
                     type: "select",
-                    options: ['male', 'female'],
+                    options: [{ value: 'male', label: 'male' },
+                    { value: 'female', label: 'female' }],
                     class: "form-group"
                 }
             },

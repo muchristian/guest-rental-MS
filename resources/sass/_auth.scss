@@ -31,16 +31,6 @@
             }
         }
         }
-        button {
-            border-radius: 0;
-            color: $white;
-            background: #3f51b5;
-            transition: all 300ms ease-in-out;
-            &:hover {
-                background: #5c6bc0;
-                color: $white;
-            }
-        }
     }
 }
 
