@@ -3,6 +3,7 @@ import Panel from './UI/Panel';
 import Navbar from './UI/Navbar';
 import Breadcrumb from './UI/Breadcrumb';
 import Customize from './Customize/Customize';
+import UpdateModal from './UI/UpdateModal';
 
 export default class DashLayout extends Component {
     render() {
@@ -11,7 +12,8 @@ export default class DashLayout extends Component {
             <Navbar/>
             <div className="row">
             <Panel/>
-            <div className="col overflow-hidden">
+            <UpdateModal show={true}/>
+            <div className="col content-col">
             <div className="d-sm-flex align-items-center justify-content-between mb-4">
             <Breadcrumb/>
           </div>

@@ -48,7 +48,7 @@ body {
 /* Track */
 
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: transparent;
 }
 
 /* Handle */
@@ -173,6 +173,8 @@ input[type=radio]:focus + label {
 }
 
 button[action=Signup],
+button[action=Back],
+button[action=Next],
 button[action=Login],
 button[action=Submit],
 button[action=Update] {
@@ -183,6 +185,8 @@ button[action=Update] {
 }
 
 button[action=Signup]:hover,
+button[action=Back]:hover,
+button[action=Next]:hover,
 button[action=Login]:hover,
 button[action=Submit]:hover,
 button[action=Update]:hover {
@@ -255,12 +259,14 @@ p {
 }
 
 .auth-content {
+  position: relative;
   height: 100%;
   background: #ffffff;
   padding: 0 5px 0 5px;
   display: flex;
   align-items: center;
   border: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 0;
 }
 
 .auth-content form p.fp-link {
@@ -275,6 +281,98 @@ p {
 
 .auth-content form p.fp-link a:hover {
   color: #5c6bc0;
+}
+
+.auth-content form #progressStepper {
+  margin-bottom: 30px;
+  overflow: hidden;
+  color: lightgrey;
+  text-align: center;
+}
+
+.auth-content form #progressStepper .active {
+  color: #000000;
+}
+
+.auth-content form #progressStepper li {
+  list-style-type: none;
+  font-size: 12px;
+  width: 32%;
+  float: left;
+  position: relative;
+}
+
+.auth-content form #progressStepper #Personal:before {
+  font-family: FontAwesome;
+  content: "\F007";
+}
+
+.auth-content form #progressStepper #Guest_house:before {
+  font-family: FontAwesome;
+  content: "\F015";
+}
+
+.auth-content form #progressStepper #Submission:before {
+  font-family: FontAwesome;
+  content: "\F1D8";
+}
+
+.auth-content form #progressStepper li:before {
+  width: 50px;
+  height: 50px;
+  line-height: 45px;
+  display: block;
+  font-size: 18px;
+  color: #ffffff;
+  background: lightgray;
+  border-radius: 50%;
+  margin: 0 auto 10px auto;
+  padding: 2px;
+}
+
+.auth-content form #progressStepper li:after {
+  content: "";
+  width: 100%;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  left: -62px;
+  top: 25px;
+  z-index: -1;
+}
+
+.auth-content form #progressStepper li:nth-child(1):after {
+  display: none;
+}
+
+.auth-content form #progressStepper li.active:before,
+.auth-content form #progressStepper li.active:after {
+  background: #3f51b5;
+}
+
+.stepper-body {
+  -webkit-animation: fadein 500ms;
+          animation: fadein 500ms;
+}
+
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .login-head h2,
@@ -561,9 +659,18 @@ i[class=ti-menu] {
 }
 
 #sidebar-container {
-  min-height: 100vh;
   padding: 0;
   position: relative;
+}
+
+.content-col {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#sidebar-container,
+.content-col {
+  height: calc(100vh - 74px);
 }
 
 /* Sidebar sizes when expanded and expanded */
@@ -648,16 +755,6 @@ i[class=ti-menu] {
           animation: fadein 500ms;
 }
 
-@-webkit-keyframes fadein {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
 @keyframes fadein {
   0% {
     opacity: 0;
@@ -740,7 +837,7 @@ i[class=ti-menu] {
 .customize {
   position: absolute;
   right: 0;
-  z-index: 999;
+  z-index: 777;
 }
 
 .customize .customize-toggle {
@@ -877,9 +974,198 @@ i[class=ti-menu] {
   background-color: #5c6bc0;
 }
 
-.update-card form {
-  border-radius: 0.25rem;
+.update-card form,
+.update-card-modal form {
+  border-radius: 0.1rem;
   background-color: #ffffff;
   box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
+}
+
+.update-card-modal {
+  position: absolute;
+  max-width: 800px;
+  margin-left: auto;
+  top: 0;
+  right: 0;
+  z-index: 999;
+  height: 100%;
+}
+
+.update-card-modal form {
+  height: 100%;
+}
+
+.hide-modal {
+  display: none;
+}
+
+.show-modal {
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 888;
+}
+
+#grad1 {
+  background-color: #9C27B0;
+  background-image: linear-gradient(120deg, #FF4081, #81D4FA);
+}
+
+#msform {
+  text-align: center;
+  position: relative;
+  margin-top: 20px;
+}
+
+#msform fieldset .form-card {
+  background: white;
+  border: 0 none;
+  border-radius: 0px;
+  box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+  padding: 20px 40px 30px 40px;
+  box-sizing: border-box;
+  width: 94%;
+  margin: 0 3% 20px 3%;
+  position: relative;
+}
+
+#msform fieldset {
+  background: white;
+  border: 0 none;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+#msform fieldset .form-card {
+  text-align: left;
+  color: #9E9E9E;
+}
+
+#msform input,
+#msform textarea {
+  padding: 0px 8px 4px 8px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0px;
+  margin-bottom: 25px;
+  margin-top: 2px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: montserrat;
+  color: #2C3E50;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+#msform input:focus,
+#msform textarea:focus {
+  box-shadow: none !important;
+  border: none;
+  font-weight: bold;
+  border-bottom: 2px solid skyblue;
+  outline-width: 0;
+}
+
+#msform .action-button {
+  width: 100px;
+  background: skyblue;
+  font-weight: bold;
+  color: white;
+  border: 0 none;
+  border-radius: 0px;
+  cursor: pointer;
+  padding: 10px 5px;
+  margin: 10px 5px;
+}
+
+#msform .action-button:hover,
+#msform .action-button:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 3px skyblue;
+}
+
+#msform .action-button-previous {
+  width: 100px;
+  background: #616161;
+  font-weight: bold;
+  color: white;
+  border: 0 none;
+  border-radius: 0px;
+  cursor: pointer;
+  padding: 10px 5px;
+  margin: 10px 5px;
+}
+
+#msform .action-button-previous:hover,
+#msform .action-button-previous:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 3px #616161;
+}
+
+select.list-dt {
+  border: none;
+  outline: 0;
+  border-bottom: 1px solid #ccc;
+  padding: 2px 5px 3px 5px;
+  margin: 2px;
+}
+
+select.list-dt:focus {
+  border-bottom: 2px solid skyblue;
+}
+
+.card {
+  z-index: 0;
+  border: none;
+  border-radius: 0.5rem;
+  position: relative;
+}
+
+.fs-title {
+  font-size: 25px;
+  color: #2C3E50;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.radio-group {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.radio {
+  display: inline-block;
+  width: 204;
+  height: 104;
+  border-radius: 0;
+  background: lightblue;
+  box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  cursor: pointer;
+  margin: 8px 2px;
+}
+
+.radio:hover {
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.radio.selected {
+  box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.fit-image {
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 

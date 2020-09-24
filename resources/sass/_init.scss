@@ -27,7 +27,7 @@ html, body {
   
   /* Track */
   ::-webkit-scrollbar-track {
-    background: $white;
+    background: transparent;
   }
   
   /* Handle */
@@ -125,6 +125,8 @@ input[type="radio"] {
   }
 }
 button[action="Signup"],
+button[action="Back"],
+button[action="Next"],
 button[action="Login"],
 button[action="Submit"],
 button[action="Update"] {

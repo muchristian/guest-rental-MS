@@ -13,12 +13,14 @@
 }
 
 .auth-content {
+    position: relative;
     height: 100%;
     background: $white;
     padding: 0 5px 0 5px;
     display: flex;
     align-items: center;
     border: 1px solid $base;
+    z-index: 0;
     form {
         p.fp-link {
             margin-top: -1em;
@@ -31,8 +33,85 @@
             }
         }
         }
+        #progressStepper {
+            margin-bottom: 30px;
+            overflow: hidden;
+            color: lightgrey;
+            text-align: center;
+        }
+        
+        #progressStepper .active {
+            color: #000000
+        }
+        
+        #progressStepper li {
+            list-style-type: none;
+            font-size: 12px;
+            width: 32%;
+            float: left;
+            position: relative
+        }
+        
+        #progressStepper #Personal:before {
+            font-family: FontAwesome;
+            content: "\f007"
+        }
+        
+        #progressStepper #Guest_house:before {
+            font-family: FontAwesome;
+            content: "\f015"
+        }
+        
+        #progressStepper #Submission:before {
+            font-family: FontAwesome;
+            content: "\f1d8"
+        }
+        
+        #progressStepper li:before {
+            width: 50px;
+            height: 50px;
+            line-height: 45px;
+            display: block;
+            font-size: 18px;
+            color: #ffffff;
+            background: lightgray;
+            border-radius: 50%;
+            margin: 0 auto 10px auto;
+            padding: 2px
+        }
+        
+        #progressStepper li:after {
+            content: '';
+            width: 100%;
+            height: 2px;
+            background: rgba(0,0,0,0.2);
+            position: absolute;
+            left: -62px;
+            top: 25px;
+            z-index: -1
+        }
+        #progressStepper li:nth-child(1) {
+            &:after {
+                display: none;
+            }
+        }
+        
+        #progressStepper li.active:before,
+        #progressStepper li.active:after {
+            background: #3f51b5
+        }
+        
     }
+    
 }
+.stepper-body {
+    animation: fadein 500ms;
+}
+@keyframes fadein {
+    0%   {opacity: 0;}
+    100% {opacity: 1;}
+  }
+
 
 .login-head, .forget-pw-head, .signup-head {
     h2 {

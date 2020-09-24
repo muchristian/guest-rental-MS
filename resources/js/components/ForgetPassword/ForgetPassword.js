@@ -3,6 +3,7 @@ import Form from '../UI/Form';
 import Button from '../UI/Button';
 import { Link } from 'react-router-dom';
 import AuthLayout from '../AuthLayout';
+import InputInfo from '../../utils/InputInfo';
 
 export default class ForgetPassword extends Component {
     state = {
@@ -11,11 +12,7 @@ export default class ForgetPassword extends Component {
                 value: "",
                 elType: 'input',
                 elementConfig: {
-                    type: "email",
-                    placeholder: "markjoe213@mail.com",
-                    name: "email",
-                    label: "Email",
-                    class: "form-group has-float-label"
+                    ...InputInfo('email')
                 }
             }
         }
