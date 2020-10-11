@@ -90,7 +90,7 @@ export default class UpdateModal extends Component {
         }
         let formElement = (
           <form className="p-4 d-flex flex-column justify-content-between">
-              
+              <span className="ml-auto close-btn ti-close" onClick={() => this.closeModal()}></span>
                           <div className="row">
               {formArray.map(el => (
                   <div key={el.id} className={"col-6 col-sm-6 col-md-6 col-lg-6 pl-0" + " " + el.config.elementConfig.class}>

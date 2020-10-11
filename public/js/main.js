@@ -1,7 +1,6 @@
 $(function () {
     $('[data-toggle="popover"]').popover();
-  })
-    
+        
         // Hide submenus
         $('#body-row .collapse').collapse('hide'); 
 
@@ -62,3 +61,4 @@ $(function () {
                 }
                 })
         })
+  })

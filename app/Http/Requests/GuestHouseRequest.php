@@ -28,8 +28,8 @@ class GuestHouseRequest extends FormRequest
     public function rules()
     {
             return [
-            'name' => 'required|unique:guest_houses',
-            'slogan' => 'regex:/^([a-zA-Z]{3,})+$/',
+            'name' => 'required|regex:/^([a-zA-Z ]{3,})+$/|unique:guest_houses',
+            'slogan' => 'regex:/^([a-zA-Z ]{3,})+$/',
             'city' => 'required|regex:/^([a-zA-Z]{3,})+$/',
             'sector' => 'required|regex:/^([a-zA-Z]{3,})+$/',
             'logo' => 'max:10000|mimes:png,svg'

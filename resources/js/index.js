@@ -8,6 +8,7 @@ import thunk from 'redux-thunk';
 // import App component
 import App from './components/App';
 
+
 //const rootReducers = combineReducers({});
 
 //const store = createStore(null, composeWithDevTools(applyMiddleware(thunk)))

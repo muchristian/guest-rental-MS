@@ -34,7 +34,7 @@ class RegistrationFormRequest extends FormRequest
             'email' => 'required|regex:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/|unique:users',
             'phoneNumber' => 'required|regex:/[0-9]/|unique:users',
             'gender' => ['required', 'regex:/^Male$|^male$|^Female$|^female$/'],
-            'password' => 'required|string|min:6|max:10',
+            'password' => 'required|regex:/^(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,16}$/|min:6|max:10',
             'role' => 'regex:/^MANAGER$|^ADMIN$|^ACCOUNTANT$/'
         ];
     }

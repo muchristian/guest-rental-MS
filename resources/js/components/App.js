@@ -7,10 +7,23 @@ import Userview from './User/UserView';
 import { Route, Switch } from 'react-router-dom';
 
 export default class App extends Component {
-    render() {
+    state={
+        isLoading: true
+    }
     
+    
+    render() {
+        setTimeout(
+            function() {
+              this.setState({ isLoading: false });
+            }.bind(this),
+            3000
+          );
         return (
             <div>
+                {this.state.isLoading ? 
+                <span>Loading....</span>
+                :
                 <Switch>
             <Route path="/admin">
                 <Dashboard/>
@@ -33,14 +46,14 @@ export default class App extends Component {
                     <div className="col-md-8">
                         <div className="card">
                             <div className="card-header">Example Component</div>
-
+                            <button>well</button>
                             <div className="card-body">I'm fdsafdsa an example component!</div>
                         </div>
                     </div>
                 </div>
             </div>
             </Route>
-        </Switch>
+        </Switch>}
             </div>            
         );
     }

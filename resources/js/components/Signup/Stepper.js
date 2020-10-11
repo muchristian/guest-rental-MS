@@ -6,8 +6,10 @@ import ProgressStepper from '../UI/ProgressStepper';
 
 export default class Stepper extends Component {
     state = {
-        steps: [],
-        sign: null
+        steps: []
+    }
+    indexOfHandler(val) {
+      return Object.keys(this.props.stepper).indexOf(val)
     }
       assignStepper() {
         let stepperArr = [];
@@ -15,7 +17,8 @@ export default class Stepper extends Component {
             console.log(key);
             stepperArr.push({
                 id: key,
-                active: key === this.props.currentStep ? true : false
+                active: key === this.props.currentStep ? true : false,
+                approval: this.indexOfHandler(key) < this.indexOfHandler(this.props.currentStep) && 'approved'
             })
         }
         this.setState({steps: stepperArr})
@@ -32,18 +35,11 @@ export default class Stepper extends Component {
       componentDidUpdate(prevProps) {
         if (prevProps.currentStep !== this.props.currentStep) {
             this.assignStepper()
-            if (this.props.currentStep !== 'Submission') {
-                /*
-          let obj = {
-            ...this.props.signup[this.props.currentStep]
-          }
-          this.setState({sign: obj})
-          */
-            } 
         }
       }
 render() {
     const {steps} = this.state;
+    console.log(steps)
         let formElement = (
             <Fragment>
                 

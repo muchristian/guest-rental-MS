@@ -41,14 +41,13 @@ function InputInfo(key) {
                     label: "Phone number",
                     class: "form-group has-float-label"
             }
-        case 'gender': {
+        case 'gender': 
             return {
                 type: "select",
                     options: [{ value: 'male', label: 'male' },
                     { value: 'female', label: 'female' }],
                     class: "form-group"
             }
-        }
         case 'password':
             return {
                 type: "password",
@@ -57,7 +56,38 @@ function InputInfo(key) {
                     label: "Password",
                     class: "form-group has-float-label"
             }
-
+            case 'name':
+                return {
+                    type: "text",
+                        placeholder: "Gueplace",
+                        name: "name",
+                        label: "Name",
+                        class: "form-group has-float-label"
+                }
+                case 'slogan':
+            return {
+                type: "text",
+                    placeholder: "Better service first",
+                    name: "slogan",
+                    label: "Slogan",
+                    class: "form-group has-float-label"
+            }
+            case 'city':
+            return {
+                type: "text",
+                    placeholder: "Kigali",
+                    name: "city",
+                    label: "City",
+                    class: "form-group has-float-label"
+            }
+            case 'sector':
+            return {
+                type: "text",
+                    placeholder: "Kicukiro",
+                    name: "sector",
+                    label: "Sector",
+                    class: "form-group has-float-label"
+            }
     }
 
 }

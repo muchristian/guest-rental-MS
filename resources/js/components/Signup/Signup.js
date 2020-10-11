@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import AuthLayout from '../AuthLayout';
 import InputInfo from '../../utils/InputInfo';
 import Stepper from './Stepper';
+import _ from 'lodash';
 
 export default class Signup extends Component {
     
@@ -21,72 +22,133 @@ export default class Signup extends Component {
                     elType: 'input',
                     elementConfig: {
                         ...InputInfo('firstName')
-                    }
+                    },
+                    validation: {
+                        required: true,
+                        word: true
+                      },
+                      valid: 0
                 },
                 lastName: {
                     value: "",
                     elType: 'input',
                     elementConfig: {
                         ...InputInfo('lastName')
-                    }
+                    },
+                    validation: {
+                        required: true,
+                        word: true
+                      },
+                      valid: 0
                 },
                 username: {
                     value: "",
                     elType: 'input',
                     elementConfig: {
                         ...InputInfo('username')
-                    }
+                    },
+                    validation: {
+                        required: true,
+                        username: true
+                      },
+                      valid: 0
                 },
                 email: {
                     value: "",
                     elType: 'input',
                     elementConfig: {
                         ...InputInfo('email')
-                    }
+                    },
+                    validation: {
+                        required: true,
+                        email: true
+                      },
+                      valid: 0
                 },
                 phoneNumber: {
                     value: "",
                     elType: 'input',
                     elementConfig: {
                         ...InputInfo('phoneNumber')
-                    }
+                    },
+                    validation: {
+                        required: true,
+                        phonenber: true
+                      },
+                      valid: 0
                 },
                 gender: {
                     value: "",
                     elType: 'select',
                     elementConfig: {
                         ...InputInfo('gender')
-                    }
+                    },
+                    validation: {
+                        required: true
+                      },
+                      valid: 1
                 },
                 password: {
                     value: "",
                     elType: 'input',
                     elementConfig: {
                         ...InputInfo('password')
-                    }
+                    },
+                    validation: {
+                        required: true,
+                        password: true
+                      },
+                      valid: 0
                 }
             },
             Guest_house: {
-                username: {
+                name: {
                     value: "",
                     elType: 'input',
                     elementConfig: {
-                        ...InputInfo('username')
-                    }
+                        ...InputInfo('name')
+                    },
+                    validation: {
+                        required: true,
+                        spaceword: true
+                      },
+                      valid: 0
                 },
-                email: {
+                slogan: {
                     value: "",
                     elType: 'input',
                     elementConfig: {
-                        ...InputInfo('email')
-                    }
+                        ...InputInfo('slogan')
+                    },
+                    validation: {
+                        required: true,
+                        spaceword: true
+                      },
+                      valid: 0
                 },
-                phoneNumber: {
+                city: {
                     value: "",
                     elType: 'input',
                     elementConfig: {
-                        ...InputInfo('phoneNumber')
-                    }
+                        ...InputInfo('city')
+                    },
+                    validation: {
+                        required: true,
+                        word: true
+                      },
+                      valid: 0
+                },
+                sector: {
+                    value: "",
+                    elType: 'input',
+                    elementConfig: {
+                        ...InputInfo('sector')
+                    },
+                    validation: {
+                        required: true,
+                        word: true
+                      },
+                      valid: 0
                 }
             }         
         },
@@ -109,17 +171,56 @@ export default class Signup extends Component {
             [name]: {
                 ...this.state.signup[this.state.currentStep][name],
                 value: e.target.value,
-              }
-          }
+                valid: this.checkIfValid(e.target.value, this.state.signup[this.state.currentStep][name].validation)
+            }
+          } 
         }
-        this.setState({signup: field});
+        //this.setState({
+        //    isValid : this.checkIfValid(e.target.value, this.state.signup[this.state.currentStep][name].validation)
+        //})
+        this.setState({
+            signup: field
+        });
       }
-    
+
+      checkIfValid(field, rules) {
+        let val = true;
+        if (rules.required) {
+          val = field.trim() !== "";
+        }
+        if (rules.word) {
+            const pattern = /^([a-zA-Z]{3,})+$/;
+          val = pattern.test(field);
+        }
+        if (rules.username) {
+            const pattern = /^([a-zA-Z0-9@_.-]{3,})+$/;
+          val = pattern.test(field);
+        }
+        if (rules.phonenber) {
+            const pattern = /^([0-9]{9,})+$/;
+          val = pattern.test(field);
+        }
+        if (rules.password) {
+            const pattern = /^(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,16}$/;
+          val = pattern.test(field);
+        }
+        if (rules.spaceword) {
+            const pattern = /^([a-zA-Z ]{3,})+$/;
+          val = pattern.test(field);
+        }
+        if (rules.email) {
+          const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+          val = pattern.test(field);
+        }
+        return val ? 1 : 0;
+      }
 
     render() {
         const {currentStep, signup, stepper} = this.state;
+        let isValid = currentStep !== 'Submission' && Object.keys(signup[currentStep])
+      .filter(key => signup[currentStep][key].valid === 1).length;
         const formArray = [];
-        const initArr = signup[currentStep];
+        const initArr = _.omit(signup[currentStep], ['isValid']);
         for (let key in initArr) {
             formArray.push({
                 id: key,
@@ -132,6 +233,7 @@ export default class Signup extends Component {
                                 <h2>guems</h2>
                                 <p>Login with your account <Link to="/login">login</Link></p>
                             </div>
+                            
                 <Stepper stepper={stepper} currentStep={currentStep}/>
                 <div className="stepper-body">
                                 {this.props.currentStep === 'Submission' ?
@@ -159,13 +261,13 @@ export default class Signup extends Component {
         let button = null;
         switch(this.state.currentStep) {
             case 'Personal':
-                button = <Button btnType="button" id={this.state.currentStep} text="Next" stepHandler={() => this.stepHandler('next')}/>
+                button = <Button btnType="button" id={this.state.currentStep} text="Next" stepHandler={() => this.stepHandler('next')} disable={isValid !== Object.keys(signup[currentStep]).length && true}/>
                 break;
             case 'Guest_house':
                 button = (
                     <Fragment>
                     <Button btnType="button" id={this.state.currentStep} text="Back" stepHandler={() => this.stepHandler('prev')}/>
-                    <Button btnType="button" id={this.state.currentStep} text="Next" stepHandler={() => this.stepHandler('next')}/>
+                    <Button btnType="button" id={this.state.currentStep} text="Next" stepHandler={() => this.stepHandler('next')} disable={isValid !== Object.keys(signup[currentStep]).length && true}/>
                     </Fragment>
                 )
                 break;

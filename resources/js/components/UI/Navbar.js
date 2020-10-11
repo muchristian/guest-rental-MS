@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import image_profile from './icons8-male-user-100.png';
 
-export default class Navbar extends Component {
+export default class Navbar extends Component { 
     render() {
         return (
 <nav className="navbar navbar-expand-lg topbar navbar-light bg-light ">
-<a href="#" data-toggle="sidebar-colapse" className="d-flex justify-content-center align-items-center">
+<a href="#" data-toggle="sidebar-colapse" onClick={() => this.props.sidebartoggle()} className="d-flex justify-content-center align-items-center">
                 <i className="ti-menu"></i>
             </a> 
   <div className="container-fluid">

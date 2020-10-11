@@ -46,9 +46,10 @@ class AuthController extends Controller
     {
       try {
         $validator = Validator::make($request->all(), [
-          'name' => 'required|unique:guest_houses',
-          'city' => 'required',
-          'sector' => 'required',
+          'name' => 'required|regex:/^([a-zA-Z ]{3,})+$/|unique:guest_houses',
+          'city' => 'required|regex:/^([a-zA-Z]{3,})+$/',
+          'sector' => 'required|regex:/^([a-zA-Z]{3,})+$/',
+          'slogan' => 'regex:/^([a-zA-Z ]{3,})+$/',
           'logo' => 'max:10000|mimes:png,svg'
         ]);
   
@@ -61,9 +62,10 @@ class AuthController extends Controller
       $guestHouse = GuestHouse::create([
           'name' => $request->name,
           'slogan' => $request->slogan,
-          'logo' => UploadHelper::fileUpload($request->file('logo'), 'upload'),
-          'location' => $request->city."-".$request->sector,
+          'logo' => $request->file('logo')->getRealPath(),
+          'location' => $request->city."-".$request->sector
       ]);
+      cloudinary()->upload($request->file('logo')->getRealPath())->getSecurePath();
       
           $user = User::create([
             'firstName' => $request->firstName,
@@ -189,14 +191,8 @@ class AuthController extends Controller
          'Please check if your username or email and password are true',
          Response::HTTP_UNAUTHORIZED
         );
-      } else {
-        $user = User::where($field, $username)->firstOrFail();
-        if ($user->is_verified !== 1) {
-          return ResponseHandler::errorResponse(
-              'check if you have verified your account',
-              Response::HTTP_UNAUTHORIZED
-          );
-      }
+      } 
+      $user = User::where($field, $username)->firstOrFail();
           if ($user->role !== 'SUPER_ADMIN') {
             if ($user->guest_houses->status !== 'approved') {
               return ResponseHandler::errorResponse(
@@ -213,7 +209,6 @@ class AuthController extends Controller
                $this->respondWithToken($token)
             );
       }
-    }
 
 
     public function forgotPassword(ForgotPasswordRequest $request) {

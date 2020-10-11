@@ -26,9 +26,11 @@ class GuestHouseController extends Controller
         $guestHouse = GuestHouse::create([
             'name' => $request->name,
             'slogan' => $request->slogan,
-            'logo' => UploadHelper::fileUpload($request->file('logo'), 'upload'),
+            'logo' => $request->file('logo')->getRealPath(),
             'location' => $request->city."-".$request->sector,
         ]);
+        $resp = cloudinary()->upload($request->file('logo')->getRealPath())->getSecurePath();
+        dd($resp);
         return ResponseHandler::successResponse(
             'Guest house registed successfully', 
             Response::HTTP_CREATED, 

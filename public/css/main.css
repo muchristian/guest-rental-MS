@@ -1,5 +1,3 @@
-@charset "UTF-8";
-
 * {
   box-sizing: border-box;
   padding: 0;
@@ -11,7 +9,7 @@ body {
   height: calc(100vh - 5px);
   background: #fafafa;
   padding: 5px 5px 0 5px;
-  font-family: "Ubuntu", sans-serif;
+  font-family: 'Ubuntu', sans-serif;
 }
 
 :root {
@@ -25,11 +23,6 @@ body {
 }
 
 :-ms-input-placeholder {
-  color: rgba(0, 0, 0, 0.6);
-  font-size: small;
-}
-
-::-ms-input-placeholder {
   color: rgba(0, 0, 0, 0.6);
   font-size: small;
 }
@@ -144,10 +137,10 @@ body {
   background-color: #e8eaf6 !important;
 }
 
-input[type=text],
-input[type=email],
-input[type=password],
-input[type=radio] {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="radio"] {
   transition: all 300ms ease-in-out;
   border-top: none;
   border-left: none;
@@ -155,41 +148,41 @@ input[type=radio] {
   border-bottom: 2px solid rgba(0, 0, 0, 0.2);
 }
 
-input[type=text]:focus,
-input[type=email]:focus,
-input[type=password]:focus,
-input[type=radio]:focus {
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="radio"]:focus {
   border-color: #3f51b5;
   outline: 0px !important;
   -webkit-appearance: none;
   box-shadow: none !important;
 }
 
-input[type=text]:focus + label,
-input[type=email]:focus + label,
-input[type=password]:focus + label,
-input[type=radio]:focus + label {
+input[type="text"]:focus + label,
+input[type="email"]:focus + label,
+input[type="password"]:focus + label,
+input[type="radio"]:focus + label {
   color: #3f51b5;
 }
 
-button[action=Signup],
-button[action=Back],
-button[action=Next],
-button[action=Login],
-button[action=Submit],
-button[action=Update] {
+button[action="Signup"],
+button[action="Back"],
+button[action="Next"],
+button[action="Login"],
+button[action="Submit"],
+button[action="Update"] {
   border-radius: 0;
   color: #ffffff;
   background: #3f51b5;
   transition: all 300ms ease-in-out;
 }
 
-button[action=Signup]:hover,
-button[action=Back]:hover,
-button[action=Next]:hover,
-button[action=Login]:hover,
-button[action=Submit]:hover,
-button[action=Update]:hover {
+button[action="Signup"]:hover,
+button[action="Back"]:hover,
+button[action="Next"]:hover,
+button[action="Login"]:hover,
+button[action="Submit"]:hover,
+button[action="Update"]:hover {
   background: #5c6bc0;
   color: #ffffff;
 }
@@ -317,6 +310,20 @@ p {
   content: "\F1D8";
 }
 
+.auth-content form #progressStepper .approved {
+  color: #000000;
+}
+
+.auth-content form #progressStepper .approved:before {
+  font-family: FontAwesome;
+  content: "\F00C" !important;
+}
+
+.auth-content form #progressStepper .approved:after,
+.auth-content form #progressStepper .approved:before {
+  background: #3f51b5 !important;
+}
+
 .auth-content form #progressStepper li:before {
   width: 50px;
   height: 50px;
@@ -331,7 +338,7 @@ p {
 }
 
 .auth-content form #progressStepper li:after {
-  content: "";
+  content: '';
   width: 100%;
   height: 2px;
   background: rgba(0, 0, 0, 0.2);
@@ -415,6 +422,7 @@ p {
 
 .topbar {
   padding: 0.5rem 0;
+  box-shadow: 0 1px 5px 0px #f1f1f1;
 }
 
 .topbar .container-fluid {
@@ -422,7 +430,7 @@ p {
   transition: padding-left 300ms ease-in-out;
 }
 
-a[data-toggle=sidebar-colapse] {
+a[data-toggle="sidebar-colapse"] {
   height: 100%;
   background: #343a40;
   position: absolute;
@@ -430,13 +438,13 @@ a[data-toggle=sidebar-colapse] {
   text-decoration: none;
 }
 
-a[data-toggle=sidebar-colapse] i {
+a[data-toggle="sidebar-colapse"] i {
   color: #ffffff;
   font-size: x-large;
   display: block;
 }
 
-a[data-toggle=sidebar-colapse] .navbar-brand {
+a[data-toggle="sidebar-colapse"] .navbar-brand {
   position: absolute;
 }
 
@@ -458,12 +466,12 @@ a[data-toggle=sidebar-colapse] .navbar-brand {
   vertical-align: 0;
   border: 0;
   font-weight: 900;
-  content: "\F105";
+  content: '\F105';
   font-family: FontAwesome;
 }
 
 .topbar .nav-item.dropdown.show .dropdown-toggle::after {
-  content: "\F107";
+  content: '\F107';
 }
 
 .topbar .nav-item .nav-link {
@@ -479,8 +487,8 @@ a[data-toggle=sidebar-colapse] .navbar-brand {
   position: absolute;
   transform: scale(0.7);
   transform-origin: top right;
-  right: 0.25rem;
-  margin-top: -0.25rem;
+  right: .25rem;
+  margin-top: -.25rem;
 }
 
 .topbar .nav-item .nav-link .img-profile {
@@ -653,8 +661,8 @@ a[data-toggle=sidebar-colapse] .navbar-brand {
   animation-timing-function: transform cubic-bezier(0.18, 1.25, 0.4, 1), opacity cubic-bezier(0, 1, 0.4, 1);
 }
 
-a[data-toggle=sidebar-colapse],
-i[class=ti-menu] {
+a[data-toggle="sidebar-colapse"],
+i[class="ti-menu"] {
   display: none;
 }
 
@@ -784,7 +792,7 @@ i[class=ti-menu] {
 
 /* Closed submenu icon */
 
-#sidebar-container .list-group .list-group-item[aria-expanded=false] .submenu-icon::after {
+#sidebar-container .list-group .list-group-item[aria-expanded="false"] .submenu-icon::after {
   content: " \F0D7";
   font-family: FontAwesome;
   display: inline;
@@ -794,7 +802,7 @@ i[class=ti-menu] {
 
 /* Opened submenu icon */
 
-#sidebar-container .list-group .list-group-item[aria-expanded=true] .submenu-icon::after {
+#sidebar-container .list-group .list-group-item[aria-expanded="true"] .submenu-icon::after {
   content: " \F0DA";
   font-family: FontAwesome;
   display: inline;
@@ -814,7 +822,7 @@ i[class=ti-menu] {
 }
 
 .breadcrumb-item {
-  font-size: 0.9em;
+  font-size: .9em;
 }
 
 .breadcrumb-item a {
@@ -886,7 +894,7 @@ i[class=ti-menu] {
   transition: margin-right 300ms ease-in;
 }
 
-.form-check [data-toggle=toggle] {
+.form-check [data-toggle="toggle"] {
   width: 50px;
   height: 25px;
 }
@@ -976,7 +984,7 @@ i[class=ti-menu] {
 
 .update-card form,
 .update-card-modal form {
-  border-radius: 0.1rem;
+  border-radius: 0.10rem;
   background-color: #ffffff;
   box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
@@ -1167,5 +1175,13 @@ select.list-dt:focus {
   width: 100%;
   -o-object-fit: cover;
      object-fit: cover;
+}
+
+.close-btn {
+  border: 0;
+  background: transparent;
+  font-weight: 500;
+  font-size: 20px;
+  cursor: pointer;
 }
 

@@ -1,9 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import DashLayout from '../DashLayout';
+import Table from '../UI/Table';
 
 
 export default class Dashboard extends Component {
-    render() {
+  render() {
         return (
         <DashLayout>
                       <div className="row">
@@ -73,6 +74,7 @@ export default class Dashboard extends Component {
               </div>
             </div>
 </div>
+<Table/>
         </DashLayout>
         )
     }
