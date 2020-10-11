@@ -23,14 +23,16 @@ class GuestHouseController extends Controller
 
 
     public function createGuestHouse(GuestHouseRequest $request) {
+        $fileName = $request->file('logo')->getClientOriginalName();
         $guestHouse = GuestHouse::create([
             'name' => $request->name,
             'slogan' => $request->slogan,
-            'logo' => $request->file('logo')->getRealPath(),
+            'logo' => $request->file('logo')->getPathname(),
             'location' => $request->city."-".$request->sector,
         ]);
-        $resp = cloudinary()->upload($request->file('logo')->getRealPath())->getSecurePath();
-        dd($resp);
+        cloudinary()->upload($request->file('logo')->getRealPath(), 
+        array("public_id" => $fileName, "overwrite" => TRUE, 
+      "resource_type" => "image"));
         return ResponseHandler::successResponse(
             'Guest house registed successfully', 
             Response::HTTP_CREATED, 

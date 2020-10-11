@@ -59,13 +59,16 @@ class AuthController extends Controller
             Response::HTTP_BAD_REQUEST
           );
         }
+        $fileName = $request->file('logo')->getClientOriginalName();
       $guestHouse = GuestHouse::create([
           'name' => $request->name,
           'slogan' => $request->slogan,
-          'logo' => $request->file('logo')->getRealPath(),
+          'logo' => $fileName,
           'location' => $request->city."-".$request->sector
       ]);
-      cloudinary()->upload($request->file('logo')->getRealPath())->getSecurePath();
+      cloudinary()->upload($request->file('logo')->getRealPath(), 
+        array("public_id" => $fileName, "overwrite" => TRUE, 
+      "resource_type" => "image"));
       
           $user = User::create([
             'firstName' => $request->firstName,
