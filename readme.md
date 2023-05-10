@@ -12,8 +12,6 @@ For testing follow below steps:
 
 ### Database Migration
 
-In order to migrate database, you pre-requisitely have to have mysql installed.
-
 -   Create database and edit `config/database.php` to match with your database configuration
 -   Execute `$ php artisan migrate` to migrate tables in database
 
